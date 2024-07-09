@@ -37,4 +37,27 @@ export class InMemoryCheckInRepository implements CheckInsRepository {
 
 		return checkOnSameDate;
 	}
+
+	async findManyByUserId(userId: string, page: number) {
+		return this.items
+			.filter((user) => user?.userId === userId)
+			?.slice((page - 1) * 20, page * 20);
+	}
+
+	async countsByUserId(userId: string) {
+		return this.items.filter((user) => user?.userId === userId).length;
+	}
+
+	async findById(id: string) {
+		return this.items.find((checkIn) => checkIn?.id === id) || null;
+	}
+
+	async save(checkIn: CheckIn) {
+		const checkInIndex = this.items.findIndex((item) => item.id === checkIn.id);
+
+		if (checkInIndex >= 0) {
+			this.items[checkInIndex] = checkIn;
+		}
+		return checkIn;
+	}
 }
