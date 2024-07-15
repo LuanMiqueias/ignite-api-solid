@@ -11,7 +11,7 @@ describe("Authenticate (e2e)", () => {
 		await app.close();
 	});
 
-	it.only("should be able to refresh a token", async () => {
+	it("should be able to refresh a token", async () => {
 		await request(app.server).post("/users").send({
 			name: "test",
 			email: "johndoe@example.com",
