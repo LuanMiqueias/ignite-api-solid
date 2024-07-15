@@ -25,14 +25,31 @@ export const authenticate = async (req: FastifyRequest, res: FastifyReply) => {
 				},
 			}
 		);
-		return res.status(200).send({
-			token,
-		});
+		const refreshToken = await res.jwtSign(
+			{},
+			{
+				sign: {
+					sub: user?.id,
+					expiresIn: "7d",
+				},
+			}
+		);
+		return res
+			.setCookie("refreshToken", refreshToken, {
+				path: "/",
+				secure: true,
+				sameSite: true,
+				httpOnly: true,
+			})
+			.status(200)
+			.send({
+				token,
+			});
 	} catch (err) {
 		if (err instanceof InvalidCreditialError) {
 			return res.status(409).send({ message: err.message });
 		} else {
-			return res.status(500).send();
+			return res.status(500).send(err);
 		}
 	}
 };
